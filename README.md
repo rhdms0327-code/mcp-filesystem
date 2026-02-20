@@ -19,22 +19,23 @@ Add the following JSON to your MCP settings file (For Claude Desktop):
       "command": "uvx",
       "args": [
         "mcp-filesystem-encoding",
-        "/absolute/path/to/allowed/dir1",
-        "C:\\absolute\\path\\to\\allowed\\dir2"
+        "C:\\Users\\username\\Desktop\\Test",
+        "C:\\Users\\username\\Documents\\Projects"
       ]
     }
   }
 }
 ```
 
-> **Note**: You must pass the directories you want to expose to the server as arguments after the package name. The server will strictly isolate and securely restrict its operations to only these directories and their subdirectories.
+> **Note**: The arguments provided after the package name act as your **Allowed Root Directories**.
+> - **Multiple Paths Supported**: You can specify as many root directories as you need by adding them as separate string arguments in the `args` array (e.g., `"C:\\dir1"`, `"C:\\dir2"`, etc.).
+> - **Security Boundary**: The MCP server will strictly restrict its file operations (read, write, search) to only these listed directories and their subdirectories.
 
-## Important Variables & Usage Options
+## Important Variables & Usage Guidelines
 
-### 1. The `path` Variable
-When providing root directories to the server configuration, or when using any file manipulation tools that require a `path` parameter, you must adhere to the following rules:
-- **Absolute Paths Required**: All paths must be fully qualified absolute paths (e.g., `C:\Users\username\Desktop\Test` on Windows or `/Users/username/Desktop/Test` on macOS/Linux). Relative paths are not permitted and will result in errors.
-- **Allowed Directories Constraint**: Any `path` passed to a tool runs through a security validator. The server will simply **deny access** to any file or directory outside the predefined roots configured during the server startup.
+### 1. Using the `path` Variable (Config & Tools)
+- **At Server Setup**: Provide the allowed root paths in your `args` list (as shown above). 
+- **During Tool Execution**: When the MCP client (AI) uses tools like `read_file` or `search_files`, it must specify the fully qualified absolute `path` (e.g., `C:\Users\username\Desktop\Test\file.txt`). If the AI requests a path outside of the configured root directories, the server will **deny access**.
 
 ### 2. The `encoding` Option
 This extended MCP server natively supports reading, writing, and searching files across different encodings, preventing character corruption in non-UTF-8 local environments (such as Korean `euc-kr` / `cp949`, or Japanese `shift-jis`).

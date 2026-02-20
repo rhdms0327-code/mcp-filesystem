@@ -1,6 +1,6 @@
 [project]
 name = "mcp-filesystem-encoding"
-version = "0.2.2"
+version = "0.2.3"
 description = "MCP server for filesystem search and manipulation with granular search, content search and file edits"
 authors = [
     { name = "alex furrier", email = "safurrier@gmail.com" },
@@ -27,6 +27,7 @@ dependencies = [
 ]
 
 [project.scripts]
+mcp-filesystem-encoding = "mcp_filesystem.__main__:app"
 mcp-filesystem = "mcp_filesystem.__main__:app"
 mcp-fs = "mcp_filesystem:main"
 

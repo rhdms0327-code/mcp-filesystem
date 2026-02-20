@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-02-20
+
 ### Added
+- Added `encoding` parameter support to `search_files` and `grep_files` for accurate searches across non-UTF-8 files (e.g., `euc-kr`)
 - Grep functionality exposed through MCP
   - Support for ripgrep with Python fallback
   - Comprehensive search with regex, context, and pattern exclusion

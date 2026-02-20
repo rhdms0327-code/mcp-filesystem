@@ -269,6 +269,7 @@ class GrepTools:
         results_limit: Optional[int] = None,
         show_progress: bool = False,
         progress_callback: Optional[Callable[[int, int], Any]] = None,
+        encoding: str = "utf-8",
     ) -> GrepResult:
         """Search for pattern in files, similar to grep.
 
@@ -292,6 +293,7 @@ class GrepTools:
             results_limit: Return at most this many matches (for pagination)
             show_progress: Whether to show progress
             progress_callback: Optional callback for progress updates
+            encoding: Text encoding (default: utf-8)
 
         Returns:
             GrepResult object with matches and statistics
@@ -322,6 +324,7 @@ class GrepTools:
                     max_depth,
                     results_offset,
                     results_limit,
+                    encoding,
                 )
             except Exception as e:
                 logger.warning(f"Ripgrep failed, falling back to Python: {e}")
@@ -347,6 +350,7 @@ class GrepTools:
             progress_callback,
             results_offset,
             results_limit,
+            encoding,
         )
 
     async def _grep_with_ripgrep(
@@ -366,6 +370,7 @@ class GrepTools:
         max_depth: Optional[int],
         results_offset: int = 0,
         results_limit: Optional[int] = None,
+        encoding: str = "utf-8",
     ) -> GrepResult:
         """Use ripgrep for searching.
 
@@ -418,6 +423,11 @@ class GrepTools:
         if exclude_patterns:
             for pattern_glob in exclude_patterns:
                 cmd.extend(["--glob", f"!{pattern_glob}"])
+
+        # Set encoding
+        if encoding.lower() != "utf-8" and encoding != "auto":
+            # Ripgrep might not support all Python encodings, but we pass it anyway
+            cmd.extend(["--encoding", encoding])
 
         # Add pattern and path
         cmd.append(pattern)
@@ -588,6 +598,7 @@ class GrepTools:
         progress_callback: Optional[Callable[[int, int], Any]],
         results_offset: int = 0,
         results_limit: Optional[int] = None,
+        encoding: str = "utf-8",
     ) -> GrepResult:
         """Use Python implementation for searching.
 
@@ -747,7 +758,7 @@ class GrepTools:
                 # Read file content
                 try:
                     content = await anyio.to_thread.run_sync(
-                        partial(file_path.read_text, encoding="utf-8", errors="replace")
+                        partial(file_path.read_text, encoding=encoding, errors="replace")
                     )
                 except UnicodeDecodeError:
                     result.add_file_error(str(file_path), "Binary file")

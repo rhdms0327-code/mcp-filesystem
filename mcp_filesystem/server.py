@@ -383,6 +383,7 @@ async def search_files(
     exclude_patterns: Optional[List[str]] = None,
     content_match: Optional[str] = None,
     max_results: int = 100,
+    encoding: str = "utf-8",
     format: str = "text",
 ) -> str:
     """Recursively search for files and directories matching a pattern.
@@ -394,6 +395,7 @@ async def search_files(
         exclude_patterns: Optional patterns to exclude
         content_match: Optional text to search within files
         max_results: Maximum number of results to return
+        encoding: Text encoding (default: utf-8)
         format: Output format ('text' or 'json')
         ctx: MCP context
 
@@ -403,7 +405,7 @@ async def search_files(
     try:
         components = get_components()
         results = await components["operations"].search_files(
-            path, pattern, recursive, exclude_patterns, content_match, max_results
+            path, pattern, recursive, exclude_patterns, content_match, max_results, encoding
         )
 
         if format.lower() == "json":
@@ -723,6 +725,7 @@ async def grep_files(
     recursive: bool = True,
     max_depth: Optional[int] = None,
     count_only: bool = False,
+    encoding: str = "utf-8",
     format: str = "text",
 ) -> str:
     """Search for pattern in files, similar to grep.
@@ -745,6 +748,7 @@ async def grep_files(
         recursive: Whether to search subdirectories
         max_depth: Maximum directory depth to recurse
         count_only: Only show match counts per file
+        encoding: Text encoding (default: utf-8)
         format: Output format ('text' or 'json')
         ctx: MCP context
 
@@ -779,6 +783,7 @@ async def grep_files(
             count_only,
             results_offset=results_offset,
             results_limit=results_limit,
+            encoding=encoding,
         )
 
         if format.lower() == "json":
